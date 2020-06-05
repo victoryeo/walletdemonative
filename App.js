@@ -39,7 +39,7 @@ const App: () => React$Node = () => {
       <PersistGate loading={null} persistor={persistor}>
         <NavigationContainer>
         <Stack.Navigator>
-          <Stack.Screen name="Home" component={Home} options={{ title: 'Overview' }} />
+          <Stack.Screen name="Home" component={Home} options={{ title: 'Wallet' }} />
         </Stack.Navigator>
         </NavigationContainer>
       </PersistGate>
