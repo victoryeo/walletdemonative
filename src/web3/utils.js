@@ -13,13 +13,24 @@ const getAccFunc = async(web3, STPupdateAccounts) => {
     let accountsRet = await web3.eth.getAccounts()
     if (accountsRet.length == 0) {
       console.log('empty account')
-      const entropy = await getRandom(16)
-      console.log(entropy)
-      myAccounts = web3.eth.accounts.create(entropy);
+      myAccounts = '0x0'
     }
     else {
       myAccounts = accountsRet[0]
     }
+    console.log(myAccounts)
+    STPupdateAccounts(myAccounts)
+  } catch (err) {
+    console.warn(err)
+  }
+}
+
+const createAccFunc = async(web3, STPupdateAccounts) => {
+  try {
+    let myAccounts
+    const entropy = await getRandom(16)
+    console.log(entropy)
+    myAccounts = web3.eth.accounts.create(entropy);
     console.log(myAccounts)
     STPupdateAccounts(myAccounts.address)
   } catch (err) {
@@ -27,11 +38,21 @@ const getAccFunc = async(web3, STPupdateAccounts) => {
   }
 }
 
-export function checkBalance(web3, STPupdateAccounts) {
+export function checkAccount(web3, STPupdateAccounts) {
   try {
-    let totalBalance = 0;
-    console.log(totalBalance)
     getAccFunc(web3, STPupdateAccounts)
+
+  } catch (err) {
+    //console.warn('web3 provider not open');
+    console.warn(err)
+    return err;
+  }
+}
+
+
+export function createAccount(web3, STPupdateAccounts) {
+  try {
+    createAccFunc(web3, STPupdateAccounts)
 
   } catch (err) {
     //console.warn('web3 provider not open');
