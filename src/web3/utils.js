@@ -23,7 +23,7 @@ const getAccFunc = async(web3, STPupdateAccounts) => {
     console.log(myAccounts)
     STPupdateAccounts(myAccounts.address)
   } catch (err) {
-    console.log(err)
+    console.warn(err)
   }
 }
 
