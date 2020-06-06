@@ -1,12 +1,13 @@
 import React from 'react';
 import { StyleSheet, Text, View, Button } from 'react-native';
+import Web3Info from "./components/Web3Info"
 
 export default class Home extends React.Component {
   render() {
     return (
       <View style={styles.container}>
         <Text>We use web3!</Text>
-
+        <Web3Info/>
       </View>
     );
   }
