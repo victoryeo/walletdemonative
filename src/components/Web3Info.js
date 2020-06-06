@@ -28,8 +28,8 @@ class Web3Info extends Component {
             }
         })
         try {
-          console.log('vic')          
-          Utils.checkBalance(this.web3, this.props.STPupdateAccounts);
+          console.log('vic')
+          Utils.checkAccount(this.web3, this.props.STPupdateAccounts);
 
             //console.log(this.props.account)
         } catch (err) {
@@ -40,11 +40,22 @@ class Web3Info extends Component {
     },1000)
   }
 
+  handleNewAccount = () => {
+    console.log("new account")
+    Utils.createAccount(this.web3, this.props.STPupdateAccounts);
+  }
+
   render() {
     return (
       <View style={styles.container}>
         <Text>Ethereum Wallet demo</Text>
         <Text>{this.state.isConnected?'Connected to rinkeby node':'Not Connected'}</Text>
+        <Button
+          onPress={this.handleNewAccount}
+          title="Create New Account"
+          color="#841584"
+        />
+        <Text>Your address is:</Text>
         <Text>{this.props.account}</Text>
       </View>
     )
