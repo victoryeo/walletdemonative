@@ -1,0 +1,17 @@
+# start avd from command line
+emulator -list-avds
+emulator -avd avdname
+
+# map port
+adb reverse tcp:8081 tcp:8081
+# adb server
+adb kill-server
+adb start-server
+# list android devices
+adb devices
+# on one terminal run bundler
+react-native start  *or*
+react-native start --reset-cache
+# on one terminal run this
+react-native run-android
+
