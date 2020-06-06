@@ -1,15 +1,11 @@
 import { combineReducers } from 'redux'
 import web3Reducer from './web3Reducer'
+import reducers from './reducers'
 
-const appReducer = combineReducers({
-  web3Reducer: web3Reducer
-});
-
-const rootReducer = (state, action) => {
-  if (action.type === 'USER_LOGOUT') {
-    state = undefined;
-  }
-  return appReducer(state, action);
-};
+const rootReducer =
+  combineReducers({
+    reducers: reducers,
+    web3: web3Reducer
+})
 
 export default rootReducer;
