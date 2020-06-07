@@ -1,9 +1,12 @@
+//import '../../shim.js'
 import React, {Component} from 'react'
 import { StyleSheet, Text, View, Button } from 'react-native'
 import {connect} from "react-redux"
 import { STPupdateAccounts } from '../actions/actions.js'
 import * as Utils from '../web3/utils'
-import Dialog from "react-native-dialog";
+import Dialog from "react-native-dialog"
+import lightwallet from 'eth-lightwallet'
+import bip39 from 'react-native-bip39'
 
 class Web3Info extends Component {
   constructor(props) {
@@ -50,10 +53,27 @@ class Web3Info extends Component {
     this.setState({ dialogVisible: false });
     console.log("submit account")
     console.log(this.password)
+    let seedPhrase = ""
+
+    /*const _generate12SeedPhase = async() => {
+      await bip39.generateMnemonic(128).then((mnemonic) => {
+        seedPhrase = mnemonic
+        console.log(seedPhrase)
+      })
+    }
+    _generate12SeedPhase()*/
+
+    try {
+      bip39.generateMnemonic(128).then((mnemonic) => {
+        console.log(mnemonic)
+      })
+    } catch (err) {
+      console.warn(err);
+    }
   }
 
   onChangeTextInput = (val) => {
-    console.log(val)
+    //console.log(val)
     this.password = val
   }
 
