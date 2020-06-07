@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, Button } from 'react-native'
 import {connect} from "react-redux"
 import { STPupdateAccounts } from '../actions/actions.js'
 import * as Utils from '../web3/utils'
+import Dialog from "react-native-dialog";
 
 class Web3Info extends Component {
   constructor(props) {
@@ -10,6 +11,7 @@ class Web3Info extends Component {
     this.state = {
       isConnected: false,
       account: '',
+      dialogVisible: false,
     };
     this.web3 = null
     this.networktype = 'none'
@@ -40,8 +42,24 @@ class Web3Info extends Component {
     },1000)
   }
 
+  handleCancel = () => {
+    this.setState({ dialogVisible: false });
+  }
+
+  handleSubmit = () => {
+    this.setState({ dialogVisible: false });
+    console.log("submit account")
+    console.log(this.password)
+  }
+
+  onChangeTextInput = (val) => {
+    console.log(val)
+    this.password = val
+  }
+
   handleNewAccount = () => {
     console.log("new account")
+    this.setState({ dialogVisible: true });
     Utils.createAccount(this.web3, this.props.STPupdateAccounts);
   }
 
@@ -57,6 +75,19 @@ class Web3Info extends Component {
         />
         <Text>Your address is:</Text>
         <Text>{this.props.account}</Text>
+        <Dialog.Container visible={this.state.dialogVisible}>
+          <Dialog.Title>Enter password</Dialog.Title>
+          <Dialog.Description>
+            for encrypting a new wallet account
+          </Dialog.Description>
+          <Dialog.Input
+          wrapperStyle={styles.wrapperStyle}
+          onChangeText={(text) => this.onChangeTextInput(text)}
+          secureTextEntry={true}
+          textInputRef="password"></Dialog.Input>
+          <Dialog.Button label="Submit" onPress={this.handleSubmit} />
+          <Dialog.Button label="Cancel" onPress={this.handleCancel} />
+        </Dialog.Container>
       </View>
     )
   }
@@ -85,5 +116,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#9999',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  wrapperStyle :{
+    backgroundColor: '#00000000',
+    borderBottomColor: '#000000',
+    borderBottomWidth: 1,
   },
 });
