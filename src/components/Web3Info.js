@@ -55,14 +55,6 @@ class Web3Info extends Component {
     console.log(this.password)
     let seedPhrase = ""
 
-    /*const _generate12SeedPhase = async() => {
-      await bip39.generateMnemonic(128).then((mnemonic) => {
-        seedPhrase = mnemonic
-        console.log(seedPhrase)
-      })
-    }
-    _generate12SeedPhase()*/
-
     try {
       bip39.generateMnemonic(128).then((mnemonic) => {
         console.log(mnemonic)
