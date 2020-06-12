@@ -30,9 +30,12 @@ const createAccFunc = async(web3, STPupdateAccounts) => {
     let myAccounts
     const entropy = await getRandom(16)
     console.log(entropy)
-    myAccounts = web3.eth.accounts.create(entropy);
-    console.log(myAccounts)
-    STPupdateAccounts(myAccounts.address)
+    console.log(web3.eth.accounts)
+    if (web3.eth.accounts) {
+      myAccounts = web3.eth.accounts.create();
+      console.log(myAccounts)
+      STPupdateAccounts(myAccounts.address)
+    }
   } catch (err) {
     console.warn(err)
   }
@@ -48,7 +51,6 @@ export function checkAccount(web3, STPupdateAccounts) {
     return err;
   }
 }
-
 
 export function createAccount(web3, STPupdateAccounts) {
   try {
