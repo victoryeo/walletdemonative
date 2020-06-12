@@ -7,6 +7,7 @@ import * as Utils from '../web3/utils'
 import Dialog from "react-native-dialog"
 import lightwallet from 'eth-lightwallet'
 import bip39 from 'react-native-bip39'
+import { hdPathString } from '../web3/constants'
 
 class Web3Info extends Component {
   constructor(props) {
@@ -54,10 +55,38 @@ class Web3Info extends Component {
     console.log("submit account")
     console.log(this.password)
     let seedPhrase = ""
+    let password = this.password
+    let ks = {}
 
     try {
       bip39.generateMnemonic(128).then((mnemonic) => {
         console.log(mnemonic)
+        seedPhrase = mnemonic
+
+        if (crypto) {
+          console.log('crypto')
+          if (crypto.getRandomValues) {
+            console.log('randomBytes')
+          } else {
+            console.log('oldBrowser')
+          }
+        }
+
+        //seedPhrase = lightwallet.keystore.generateRandomSeed(password);
+        const opt = {
+          password,
+          seedPhrase,
+          hdPathString,
+        };
+
+        lightwallet.keystore.createVault(opt, (err, data) => {
+          if (err)
+            console.warn(err)
+          console.log('createVault')
+          ks = data
+          console.log(data)
+        })
+
       })
     } catch (err) {
       console.warn(err);
