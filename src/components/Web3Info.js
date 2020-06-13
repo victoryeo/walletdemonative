@@ -2,7 +2,7 @@
 import React, {Component} from 'react'
 import { StyleSheet, Text, View, Button } from 'react-native'
 import {connect} from "react-redux"
-import { STPupdateAccounts } from '../actions/actions.js'
+import { STPupdateAccounts, STPupdateSeedPhrase } from '../actions/actions.js'
 import * as Utils from '../web3/utils'
 import Dialog from "react-native-dialog"
 import lightwallet from 'eth-lightwallet'
@@ -62,6 +62,8 @@ class Web3Info extends Component {
       bip39.generateMnemonic(128).then((mnemonic) => {
         console.log(mnemonic)
         seedPhrase = mnemonic
+        console.log('update seed')
+        Utils.updateSeedPhrase(seedPhrase, this.props.STPupdateSeedPhrase)
 
         if (crypto) {
           console.log('crypto')
@@ -116,6 +118,8 @@ class Web3Info extends Component {
         />
         <Text>Your address is:</Text>
         <Text>{this.props.account}</Text>
+        <Text>Write down your seed phrase</Text>
+        <Text>{this.props.seedPhrase}</Text>
         <Dialog.Container visible={this.state.dialogVisible}>
           <Dialog.Title>Enter password</Dialog.Title>
           <Dialog.Description>
@@ -137,12 +141,14 @@ class Web3Info extends Component {
 const mapStateToProps = state => ({
         web3: state.web3,
         account: state.reducers.account,
+        seedPhrase: state.reducers.seedPhrase,
 })
 
 const mapDispatchToProps = (dispatch) => {
   // Action
   return {
     STPupdateAccounts: (account0) => dispatch(STPupdateAccounts(account0)),
+    STPupdateSeedPhrase: (seedPhrase) => dispatch(STPupdateSeedPhrase(seedPhrase)),
   };
 };
 
