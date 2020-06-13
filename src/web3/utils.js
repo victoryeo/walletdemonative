@@ -30,7 +30,6 @@ const createAccFunc = async(web3, STPupdateAccounts) => {
     let myAccounts
     const entropy = await getRandom(16)
     console.log(entropy)
-    console.log(web3.eth.accounts)
     if (web3.eth.accounts) {
       myAccounts = web3.eth.accounts.create();
       console.log(myAccounts)
@@ -55,6 +54,18 @@ export function checkAccount(web3, STPupdateAccounts) {
 export function createAccount(web3, STPupdateAccounts) {
   try {
     createAccFunc(web3, STPupdateAccounts)
+
+  } catch (err) {
+    //console.warn('web3 provider not open');
+    console.warn(err)
+    return err;
+  }
+}
+
+export function updateSeedPhrase(seed, STPupdateSeedPhrase) {
+  try {
+    console.log(seed)
+    STPupdateSeedPhrase(seed)
 
   } catch (err) {
     //console.warn('web3 provider not open');
