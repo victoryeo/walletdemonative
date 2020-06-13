@@ -62,7 +62,6 @@ class Web3Info extends Component {
       bip39.generateMnemonic(128).then((mnemonic) => {
         console.log(mnemonic)
         seedPhrase = mnemonic
-        console.log('update seed')
         Utils.updateSeedPhrase(seedPhrase, this.props.STPupdateSeedPhrase)
 
         if (crypto) {
@@ -74,21 +73,28 @@ class Web3Info extends Component {
           }
         }
 
-        //seedPhrase = lightwallet.keystore.generateRandomSeed(password);
-        const opt = {
-          password,
-          seedPhrase,
-          hdPathString,
-        };
+        const spReturned = setInterval(() => {
+            clearInterval(spReturned);
+            try {
+              console.log('spReturned')
+              //seedPhrase = lightwallet.keystore.generateRandomSeed(password);
+              const opt = {
+                password,
+                seedPhrase,
+                hdPathString,
+              };
 
-        lightwallet.keystore.createVault(opt, (err, data) => {
-          if (err)
-            console.warn(err)
-          console.log('createVault')
-          ks = data
-          console.log(data)
-        })
-
+              lightwallet.keystore.createVault(opt, (err, data) => {
+                if (err)
+                  console.warn(err)
+                console.log('createVault')
+                ks = data
+                console.log(data)
+              })
+            } catch (err) {
+              console.error('error', err);
+            }
+        },10000)
       })
     } catch (err) {
       console.warn(err);
@@ -111,14 +117,22 @@ class Web3Info extends Component {
       <View style={styles.container}>
         <Text>Ethereum Wallet demo</Text>
         <Text>{this.state.isConnected?'Connected to rinkeby node':'Not Connected'}</Text>
+        <View style={styles.button1}>
         <Button
           onPress={this.handleNewAccount}
-          title="Create New Account"
+          title="Create New Wallet"
           color="#841584"
-        />
+        /></View>
+                  <View ><Text></Text></View>
+        <View style={styles.button1}>
+        <Button
+          onPress={this.handleRestoreAccount}
+          title="   Restore Wallet   "
+          color="#E51594"
+        /></View>
         <Text>Your address is:</Text>
         <Text>{this.props.account}</Text>
-        <Text>Write down your seed phrase</Text>
+        <Text>{this.props.seedPhrase?'Write down your seed phrase':''}</Text>
         <Text>{this.props.seedPhrase}</Text>
         <Dialog.Container visible={this.state.dialogVisible}>
           <Dialog.Title>Enter password</Dialog.Title>
@@ -168,5 +182,16 @@ const styles = StyleSheet.create({
     backgroundColor: '#00000000',
     borderBottomColor: '#000000',
     borderBottomWidth: 1,
+  },
+  button1 :{
+    width: '100%',
+    backgroundColor: "#ffffff",
+    borderRadius: 2,
+    borderColor: "#ffffff",
+    borderWidth: 1,
+    shadowColor: "rgba(0,0,0,.12)",
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    justifyContent: 'space-between'
   },
 });
