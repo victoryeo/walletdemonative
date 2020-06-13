@@ -7,7 +7,8 @@ import * as Utils from '../web3/utils'
 import Dialog from "react-native-dialog"
 import lightwallet from 'eth-lightwallet'
 import bip39 from 'react-native-bip39'
-import { hdPathString } from '../web3/constants'
+import { hdPathString, localStorageKey } from '../web3/constants'
+import AsyncStorage from '@react-native-community/async-storage'
 
 class Web3Info extends Component {
   constructor(props) {
@@ -58,6 +59,11 @@ class Web3Info extends Component {
     let password = this.password
     let ks = {}
 
+    const saveWallet = async (walletdump) => {
+      console.log('saveWallet')
+      await AsyncStorage.setItem(localStorageKey, `${walletdump}`);
+    };
+
     try {
       bip39.generateMnemonic(128).then((mnemonic) => {
         console.log(mnemonic)
@@ -89,7 +95,13 @@ class Web3Info extends Component {
                   console.warn(err)
                 console.log('createVault')
                 ks = data
-                console.log(data)
+                console.log(ks)
+                const walletdump = {
+                   ver: '1',
+                   ks: ks.serialize(),
+                }
+                console.log(walletdump)
+                saveWallet(walletdump)
               })
             } catch (err) {
               console.error('error', err);
