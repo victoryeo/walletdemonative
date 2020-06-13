@@ -1,5 +1,6 @@
 const initialState = {
   account: '0x0',
+  seedPhrase: '',
 }
 
 const reducers = (state = initialState, action) => {
@@ -12,6 +13,14 @@ const reducers = (state = initialState, action) => {
       return {
         ...state,
         account: action.payload,
+      };
+      break
+    case 'UPDATE_SEEDPHRASE':
+      console.log("actiontype matched")
+      console.log(action.payload)
+      return {
+        ...state,
+        seedPhrase: action.payload,
       };
       break
     default:
