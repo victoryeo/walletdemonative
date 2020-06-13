@@ -1,6 +1,7 @@
 const actionTypes = {
   WEB3_INITIALIZED : 'WEB3_INITIALIZED',
   UPDATE_ACCOUNT: 'UPDATE_ACCOUNT',
+  UPDATE_SEEDPHRASE: 'UPDATE_SEEDPHRASE',
 }
 
 export const web3Initialized = (results) => {
@@ -14,6 +15,14 @@ export const STPupdateAccounts = account0 => dispatch => {
   dispatch({
     type: actionTypes.UPDATE_ACCOUNT,
     payload: account0,
+  });
+};
+
+export const STPupdateSeedPhrase = seedPhrase => dispatch => {
+  console.log(seedPhrase)
+  dispatch({
+    type: actionTypes.UPDATE_SEEDPHRASE,
+    payload: seedPhrase,
   });
 };
 
