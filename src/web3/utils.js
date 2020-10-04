@@ -31,7 +31,7 @@ const createAccFunc = async(web3, STPupdateAccounts) => {
     const entropy = await getRandom(16)
     console.log(entropy)
     if (web3.eth.accounts) {
-      myAccounts = web3.eth.accounts.create();
+      myAccounts = web3.eth.accounts.create(entropy);
       console.log(myAccounts)
       STPupdateAccounts(myAccounts.address)
     }
