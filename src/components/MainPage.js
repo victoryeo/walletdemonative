@@ -15,7 +15,7 @@ class MainPage extends Component {
     super(props)
     this.state = {
       isConnected: false,
-      account: '',
+      accountAddress: '',
       newdialogVisible: false,
       restoredialogVisible: false,
     };
@@ -36,10 +36,9 @@ class MainPage extends Component {
           }
         })
         try {
-          console.log('vic')
+          console.log('check account')
           Utils.checkAccount(this.web3, this.props.STPupdateAccounts);
-
-            //console.log(this.props.account)
+          //console.log(this.props.account)
         } catch (err) {
           console.error('error', err);
         }
@@ -47,13 +46,13 @@ class MainPage extends Component {
     },1000)
   }
 
-  handleCancel = () => {
+  handleNewCancel = () => {
     this.setState({ newdialogVisible: false });
   }
 
-  handleSubmit = () => {
+  handleNewSubmit = () => {
     this.setState({ newdialogVisible: false });
-    console.log("submit account")
+    console.log("handle submit")
     console.log(this.password)
     let seedPhrase = ""
     let password = this.password
@@ -113,7 +112,7 @@ class MainPage extends Component {
     }
   }
 
-  onChangeTextInput = (val) => {
+  onChangePasswordInput = (val) => {
     //console.log(val)
     this.password = val
   }
@@ -122,6 +121,19 @@ class MainPage extends Component {
     console.log("new account")
     this.setState({ newdialogVisible: true });
     Utils.createAccount(this.web3, this.props.STPupdateAccounts);
+  }
+
+  handleRestoreCancel = () => {
+    this.setState({ restoredialogVisible: false });
+  }
+
+  handleRestoreSubmit = () => {
+    this.setState({ restoredialogVisible: false });
+  }
+
+  onChangeSeedPhraseInput = (val) => {
+    //console.log(val)
+    this.seedphrase = val
   }
 
   handleRestoreAccount = () => {
@@ -149,7 +161,7 @@ class MainPage extends Component {
         /></View>
         <Text>Your address is:</Text>
         <Text>{this.props.account}</Text>
-        <Text>{this.props.seedPhrase?'Write down your seed phrase':''}</Text>
+        <Text>{this.props.seedPhrase?'Write down your seed phrase:':''}</Text>
         <Text>{this.props.seedPhrase}</Text>
         <Dialog.Container visible={this.state.newdialogVisible}>
           <Dialog.Title>Enter password</Dialog.Title>
@@ -158,12 +170,24 @@ class MainPage extends Component {
           </Dialog.Description>
           <Dialog.Input
             wrapperStyle={styles.wrapperStyle}
-            onChangeText={(text) => this.onChangeTextInput(text)}
+            onChangeText={(text) => this.onChangePasswordInput(text)}
             secureTextEntry={true}
             textInputRef="password">
           </Dialog.Input>
-          <Dialog.Button label="Submit" onPress={this.handleSubmit} />
-          <Dialog.Button label="Cancel" onPress={this.handleCancel} />
+          <Dialog.Button label="Submit" onPress={this.handleNewSubmit} />
+          <Dialog.Button label="Cancel" onPress={this.handleNewCancel} />
+        </Dialog.Container>
+        <Dialog.Container visible={this.state.restoredialogVisible}>
+          <Dialog.Title>Enter seed phrase</Dialog.Title>
+          <Dialog.Description>
+            for restoring a wallet account
+          </Dialog.Description>
+          <Dialog.Input
+            wrapperStyle={styles.wrapperStyle}
+            onChangeText={(text) => this.onChangeSeedPhraseInput(text)}
+          />
+          <Dialog.Button label="Submit" onPress={this.handleRestoreSubmit} />
+          <Dialog.Button label="Cancel" onPress={this.handleRestoreCancel} />
         </Dialog.Container>
       </View>
     )
