@@ -26,7 +26,7 @@ class MainPage extends Component {
       if (this.props.web3 != null) {
         clearInterval(web3Returned);
         this.web3 = this.props.web3.web3Instance
-            //console.log(this.web3)
+        //console.log(this.web3)
         Utils.checkNetwork(this.web3).then((res) => {
           console.log(res)
           if (res == 'local' || res == 'rinkeby') {
@@ -128,15 +128,42 @@ class MainPage extends Component {
   }
 
   handleRestoreSubmit = () => {
-    this.setState({ restoredialogVisible: false });
+    this.setState({ restoredialogVisible: false })
+    let seed = bip39.mnemonicToSeed(this.seedPhrase)
+    console.log(seed)
+    const spReturned = setInterval(() => {
+      clearInterval(spReturned);
+      try {
+        console.log('spReturned in restore')
+        let password = "dummy"
+        let seedPhrase = this.seedPhrase
+        let ks = {}
+        const option = {
+          password,
+          seedPhrase,
+          hdPathString,
+        };
+
+        lightwallet.keystore.createVault(option, (err, data) => {
+          if (err)
+            console.warn(err)
+          console.log('createVault in restore')
+          ks = data
+          console.log(ks)
+        })
+      } catch (err) {
+        console.error('error', err);
+      }
+    },1000)
   }
 
   onChangeSeedPhraseInput = (val) => {
     //console.log(val)
-    this.seedphrase = val
+    this.seedPhrase = val
   }
 
   handleRestoreAccount = () => {
+    //recover keystore from seed phrase
     console.log("restore account")
     this.setState({ restoredialogVisible: true });
   }
@@ -152,7 +179,7 @@ class MainPage extends Component {
           title="Create New Wallet"
           color="#841584"
         /></View>
-                  <View ><Text></Text></View>
+        <View ><Text></Text></View>
         <View style={styles.button1}>
         <Button
           onPress={this.handleRestoreAccount}
