@@ -14,7 +14,7 @@ if (typeof atob === 'undefined') {
   };
 }
 
-global.crypto = {
+/*global.crypto = {
   /*getRandomValues(byteArray) {
     for (let i = 0; i < byteArray.length; i++) {
       byteArray[i] = Math.floor(256 * Math.random());
@@ -25,5 +25,5 @@ global.crypto = {
       randombytes[i] = Math.floor(256 * Math.random());
     }
     return randombytes;
-  },*/
-};
+  },
+};*/
