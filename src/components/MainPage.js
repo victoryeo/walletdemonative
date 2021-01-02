@@ -10,13 +10,14 @@ import bip39 from 'react-native-bip39'
 import { hdPathString, localStorageKey } from '../web3/constants'
 import AsyncStorage from '@react-native-community/async-storage'
 
-class Web3Info extends Component {
+class MainPage extends Component {
   constructor(props) {
     super(props)
     this.state = {
       isConnected: false,
       account: '',
-      dialogVisible: false,
+      newdialogVisible: false,
+      restoredialogVisible: false,
     };
     this.web3 = null
     this.networktype = 'none'
@@ -27,12 +28,12 @@ class Web3Info extends Component {
         this.web3 = this.props.web3.web3Instance
             //console.log(this.web3)
         Utils.checkNetwork(this.web3).then((res) => {
-            console.log(res)
-            if (res == 'local' || res == 'rinkeby') {
-              this.setState({
-                isConnected: true,
-             })
-            }
+          console.log(res)
+          if (res == 'local' || res == 'rinkeby') {
+            this.setState({
+              isConnected: true,
+            })
+          }
         })
         try {
           console.log('vic')
@@ -42,17 +43,16 @@ class Web3Info extends Component {
         } catch (err) {
           console.error('error', err);
         }
-
       }
     },1000)
   }
 
   handleCancel = () => {
-    this.setState({ dialogVisible: false });
+    this.setState({ newdialogVisible: false });
   }
 
   handleSubmit = () => {
-    this.setState({ dialogVisible: false });
+    this.setState({ newdialogVisible: false });
     console.log("submit account")
     console.log(this.password)
     let seedPhrase = ""
@@ -80,32 +80,32 @@ class Web3Info extends Component {
         }
 
         const spReturned = setInterval(() => {
-            clearInterval(spReturned);
-            try {
-              console.log('spReturned')
-              //seedPhrase = lightwallet.keystore.generateRandomSeed(password);
-              const opt = {
-                password,
-                seedPhrase,
-                hdPathString,
-              };
+          clearInterval(spReturned);
+          try {
+            console.log('spReturned')
+            //seedPhrase = lightwallet.keystore.generateRandomSeed(password);
+            const opt = {
+              password,
+              seedPhrase,
+              hdPathString,
+            };
 
-              lightwallet.keystore.createVault(opt, (err, data) => {
-                if (err)
-                  console.warn(err)
-                console.log('createVault')
-                ks = data
-                console.log(ks)
-                const walletdump = {
-                   ver: '1',
-                   ks: ks.serialize(),
-                }
-                console.log(walletdump)
-                saveWallet(walletdump)
-              })
-            } catch (err) {
-              console.error('error', err);
-            }
+            lightwallet.keystore.createVault(opt, (err, data) => {
+              if (err)
+                console.warn(err)
+              console.log('createVault')
+              ks = data
+              console.log(ks)
+              const walletdump = {
+                  ver: '1',
+                  ks: ks.serialize(),
+              }
+              console.log(walletdump)
+              saveWallet(walletdump)
+            })
+          } catch (err) {
+            console.error('error', err);
+          }
         },10000)
       })
     } catch (err) {
@@ -120,8 +120,13 @@ class Web3Info extends Component {
 
   handleNewAccount = () => {
     console.log("new account")
-    this.setState({ dialogVisible: true });
+    this.setState({ newdialogVisible: true });
     Utils.createAccount(this.web3, this.props.STPupdateAccounts);
+  }
+
+  handleRestoreAccount = () => {
+    console.log("restore account")
+    this.setState({ restoredialogVisible: true });
   }
 
   render() {
@@ -146,16 +151,17 @@ class Web3Info extends Component {
         <Text>{this.props.account}</Text>
         <Text>{this.props.seedPhrase?'Write down your seed phrase':''}</Text>
         <Text>{this.props.seedPhrase}</Text>
-        <Dialog.Container visible={this.state.dialogVisible}>
+        <Dialog.Container visible={this.state.newdialogVisible}>
           <Dialog.Title>Enter password</Dialog.Title>
           <Dialog.Description>
             for encrypting a new wallet account
           </Dialog.Description>
           <Dialog.Input
-          wrapperStyle={styles.wrapperStyle}
-          onChangeText={(text) => this.onChangeTextInput(text)}
-          secureTextEntry={true}
-          textInputRef="password"></Dialog.Input>
+            wrapperStyle={styles.wrapperStyle}
+            onChangeText={(text) => this.onChangeTextInput(text)}
+            secureTextEntry={true}
+            textInputRef="password">
+          </Dialog.Input>
           <Dialog.Button label="Submit" onPress={this.handleSubmit} />
           <Dialog.Button label="Cancel" onPress={this.handleCancel} />
         </Dialog.Container>
@@ -165,9 +171,9 @@ class Web3Info extends Component {
 }
 
 const mapStateToProps = state => ({
-        web3: state.web3,
-        account: state.reducers.account,
-        seedPhrase: state.reducers.seedPhrase,
+  web3: state.web3,
+  account: state.reducers.account,
+  seedPhrase: state.reducers.seedPhrase,
 })
 
 const mapDispatchToProps = (dispatch) => {
@@ -181,7 +187,7 @@ const mapDispatchToProps = (dispatch) => {
 export default connect (
   mapStateToProps,
   mapDispatchToProps,
-) (Web3Info)
+) (MainPage)
 
 const styles = StyleSheet.create({
   container: {
