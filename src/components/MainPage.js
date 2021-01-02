@@ -144,7 +144,7 @@ class MainPage extends Component {
           hdPathString,
         };
 
-        lightwallet.keystore.createVault(option, (err, data) => {
+        lightwallet.keystore.createVault(option, function(err, data) {
           if (err)
             console.warn(err)
           console.log('createVault in restore')
@@ -168,6 +168,12 @@ class MainPage extends Component {
     this.setState({ restoredialogVisible: true });
   }
 
+  onSendTx = () => {
+    console.log("onSendTx")
+    this.props.navigation.navigate('Send')
+
+  }
+
   render() {
     return (
       <View style={styles.container}>
@@ -188,6 +194,12 @@ class MainPage extends Component {
         /></View>
         <Text>Your address is:</Text>
         <Text>{this.props.account}</Text>
+        {this.props.account !== 0x0
+          ?(<View style={styles.button1}>
+            <Button title="Send Transaction"
+              onPress={this.onSendTx}/>
+            </View>)
+          :''}
         <Text>{this.props.seedPhrase?'Write down your seed phrase:':''}</Text>
         <Text>{this.props.seedPhrase}</Text>
         <Dialog.Container visible={this.state.newdialogVisible}>
