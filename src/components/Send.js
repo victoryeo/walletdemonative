@@ -1,6 +1,8 @@
 import React, {useState, useEffect} from 'react'
 import {StyleSheet, View, Text, TextInput, Button} from 'react-native'
 import {connect} from "react-redux"
+import { hdPathString, localStorageKey } from '../web3/constants'
+import AsyncStorage from '@react-native-community/async-storage'
 
 function Send(props) {
   const [destination, setDestination] = useState("")
@@ -10,6 +12,24 @@ function Send(props) {
     console.log("onSend")
     console.log(destination)
     console.log(amount)
+
+    const getWallet = async () => {
+      console.log('getWallet')
+      const result = await AsyncStorage.getItem(localStorageKey)
+      return result
+    }
+
+    //get the wallet from the AsyncStorage
+    (async () => {
+      const wallet = await getWallet()
+      console.log(wallet)
+      const walletObj = JSON.parse(wallet)
+      //show the wallet version if it is available
+      if (walletObj.hasOwnProperty("ver")) {
+        console.log(walletObj.ver)
+      }
+      console.log(walletObj.ks)
+    })()
   }
 
   return(
