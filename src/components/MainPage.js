@@ -60,7 +60,7 @@ class MainPage extends Component {
 
     const saveWallet = async (walletdump) => {
       console.log('saveWallet')
-      await AsyncStorage.setItem(localStorageKey, `${walletdump}`);
+      await AsyncStorage.setItem(localStorageKey, JSON.stringify(walletdump));
     };
 
     try {
