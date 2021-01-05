@@ -24,6 +24,7 @@
     "dns.js": "^1.0.1",
     "domain-browser": "^1.2.0",
     "eth-lightwallet": "^4.0.0",
+    "ethereumjs-tx": "^2.1.2",
     "events": "^1.1.1",
     "https-browserify": "0.0.1",
     "node-libs-browser": "^2.2.1",
