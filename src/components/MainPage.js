@@ -82,11 +82,13 @@ class MainPage extends Component {
           clearInterval(spReturned);
           try {
             console.log('spReturned')
+            let salt = "salt"
             //seedPhrase = lightwallet.keystore.generateRandomSeed(password);
             const opt = {
               password,
               seedPhrase,
               hdPathString,
+              salt
             };
 
             lightwallet.keystore.createVault(opt, (err, data) => {
