@@ -4,7 +4,6 @@ import {connect} from "react-redux"
 import { hdPathString, localStorageKey } from '../web3/constants'
 import AsyncStorage from '@react-native-community/async-storage'
 import lightwallet from 'eth-lightwallet'
-import Tx from 'ethereumjs-tx'
 
 function Send(props) {
   const [destination, setDestination] = useState("")
@@ -22,39 +21,54 @@ function Send(props) {
       return result
     }
 
-    //get the wallet from the AsyncStorage
-    (async () => {
-      const wallet = await getWallet()
-      console.log(wallet)
-      const walletObj = JSON.parse(wallet)
+    getWallet().then(data => {
+      console.log(data)
+      const walletObj = JSON.parse(data)
       //show the wallet version if it is available
       if (walletObj.hasOwnProperty("ver")) {
         console.log(walletObj.ver)
       }
       console.log(walletObj.ks)
+      //have to deserialize the keystore because the saved
+      //copy is serialized
+      const ksObj = lightwallet.keystore.deserialize(walletObj.ks)
+      console.log(ksObj)
 
-      //raw tx
-      let rawTx = new Tx({
-        nonce: '0x1F',
-        gasPrice: '0x3B9ACA00',
-        gasLimit: '3141592',
+      if (typeof(props.web3) !== 'undefined') {
+        console.log("props.web3.web3Instance")
+      }
+      console.log(`${destination} ${destination.length}`)
+      //txOptions
+      let txOptions = {
+        nonce: 0x1F,
+        gasPrice: 0x3B9ACA00,
+        gasLimit: 3000000,
         to: destination,
-        value: amount,
-      })
-      console.log(rawTx)
-      lightwallet.keystore.deriveKeyFromPassword(password, function(err, pwDerivedKey) {
-        let signedFunctionTx = lightwallet.signing.signTx(
-          walletObj.ks,
-          pwDerivedKey,
-          rawTx,
-          props.account);
-        console.log("Signed function transaction:"+signedFunctionTx)
-        props.web3.eth.sendRawTransaction('0x'+signedFunctionTx, function(err, hash) {
-            console.log(err)
-            console.log(hash)
-            })
+        value: props.web3.web3Instance.utils.toHex(amount),
+      }
+      //form raw Tx
+      let rawTx = lightwallet.txutils.valueTx(txOptions)
+      console.log(`rawTx ${rawTx}`)
+      //get the derived key
+      if (typeof(lightwallet.keystore.deriveKeyFromPassword) === 'undefined') {
+        //if deriveKeyFromPassword is undefined
+        //then we use deriveKeyFromPasswordAndSalt
+        let salt = "salt"
+        lightwallet.keystore.deriveKeyFromPasswordAndSalt(password, salt, function(err, pwDerivedKey) {
+          console.log(pwDerivedKey)
+          let signedFunctionTx = lightwallet.signing.signTx(
+            ksObj,
+            pwDerivedKey,
+            rawTx,
+            props.account);
+          console.log("Signed function transaction:"+signedFunctionTx)
+          props.web3.eth.sendRawTransaction('0x'+signedFunctionTx, function(err, hash) {
+              console.log(err)
+              console.log(hash)
+              })
         })
-    })()
+      }
+    })
   }
 
   return(
