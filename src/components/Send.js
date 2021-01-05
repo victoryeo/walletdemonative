@@ -3,9 +3,12 @@ import {StyleSheet, View, Text, TextInput, Button} from 'react-native'
 import {connect} from "react-redux"
 import { hdPathString, localStorageKey } from '../web3/constants'
 import AsyncStorage from '@react-native-community/async-storage'
+import lightwallet from 'eth-lightwallet'
+import Tx from 'ethereumjs-tx'
 
 function Send(props) {
   const [destination, setDestination] = useState("")
+  const [password, setPassword] = useState("")
   const [amount, setAmount] = useState(0)
 
   const onSend = () => {
@@ -29,6 +32,28 @@ function Send(props) {
         console.log(walletObj.ver)
       }
       console.log(walletObj.ks)
+
+      //raw tx
+      let rawTx = new Tx({
+        nonce: '0x1F',
+        gasPrice: '0x3B9ACA00',
+        gasLimit: '3141592',
+        to: destination,
+        value: amount,
+      })
+      console.log(rawTx)
+      lightwallet.keystore.deriveKeyFromPassword(password, function(err, pwDerivedKey) {
+        let signedFunctionTx = lightwallet.signing.signTx(
+          walletObj.ks,
+          pwDerivedKey,
+          rawTx,
+          props.account);
+        console.log("Signed function transaction:"+signedFunctionTx)
+        props.web3.eth.sendRawTransaction('0x'+signedFunctionTx, function(err, hash) {
+            console.log(err)
+            console.log(hash)
+            })
+        })
     })()
   }
 
@@ -45,6 +70,11 @@ function Send(props) {
       <TextInput
         placeholder="amount"
         onChangeText={(amount) => (setAmount(amount))}/>
+      <Text>Password:</Text>
+      <TextInput
+        placeholder="password"
+        secureTextEntry={true}
+        onChangeText={(password) => (setPassword(password))}/>
       <Button
         title="Send"
         onPress={()=>onSend()}/>
