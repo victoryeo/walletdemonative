@@ -26,7 +26,7 @@ class MainPage extends Component {
       if (this.props.web3 != null) {
         clearInterval(web3Returned);
         this.web3 = this.props.web3.web3Instance
-            //console.log(this.web3)
+        //console.log(this.web3)
         Utils.checkNetwork(this.web3).then((res) => {
           console.log(res)
           if (res == 'local' || res == 'rinkeby') {
@@ -60,7 +60,7 @@ class MainPage extends Component {
 
     const saveWallet = async (walletdump) => {
       console.log('saveWallet')
-      await AsyncStorage.setItem(localStorageKey, `${walletdump}`);
+      await AsyncStorage.setItem(localStorageKey, JSON.stringify(walletdump));
     };
 
     try {
@@ -82,11 +82,13 @@ class MainPage extends Component {
           clearInterval(spReturned);
           try {
             console.log('spReturned')
+            let salt = "salt"
             //seedPhrase = lightwallet.keystore.generateRandomSeed(password);
             const opt = {
               password,
               seedPhrase,
               hdPathString,
+              salt
             };
 
             lightwallet.keystore.createVault(opt, (err, data) => {
@@ -128,17 +130,50 @@ class MainPage extends Component {
   }
 
   handleRestoreSubmit = () => {
-    this.setState({ restoredialogVisible: false });
+    this.setState({ restoredialogVisible: false })
+    let seed = bip39.mnemonicToSeed(this.seedPhrase)
+    console.log(seed)
+    const spReturned = setInterval(() => {
+      clearInterval(spReturned);
+      try {
+        console.log('spReturned in restore')
+        let password = "dummy"
+        let seedPhrase = this.seedPhrase
+        let ks = {}
+        const option = {
+          password,
+          seedPhrase,
+          hdPathString,
+        };
+
+        lightwallet.keystore.createVault(option, function(err, data) {
+          if (err)
+            console.warn(err)
+          console.log('createVault in restore')
+          ks = data
+          console.log(ks)
+        })
+      } catch (err) {
+        console.error('error', err);
+      }
+    },1000)
   }
 
   onChangeSeedPhraseInput = (val) => {
     //console.log(val)
-    this.seedphrase = val
+    this.seedPhrase = val
   }
 
   handleRestoreAccount = () => {
+    //recover keystore from seed phrase
     console.log("restore account")
     this.setState({ restoredialogVisible: true });
+  }
+
+  onSendTx = () => {
+    console.log("onSendTx")
+    this.props.navigation.navigate('Send')
+
   }
 
   render() {
@@ -152,7 +187,7 @@ class MainPage extends Component {
           title="Create New Wallet"
           color="#841584"
         /></View>
-                  <View ><Text></Text></View>
+        <View ><Text></Text></View>
         <View style={styles.button1}>
         <Button
           onPress={this.handleRestoreAccount}
@@ -161,6 +196,12 @@ class MainPage extends Component {
         /></View>
         <Text>Your address is:</Text>
         <Text>{this.props.account}</Text>
+        {this.props.account !== 0x0
+          ?(<View style={styles.button1}>
+            <Button title="Send Transaction"
+              onPress={this.onSendTx}/>
+            </View>)
+          :''}
         <Text>{this.props.seedPhrase?'Write down your seed phrase:':''}</Text>
         <Text>{this.props.seedPhrase}</Text>
         <Dialog.Container visible={this.state.newdialogVisible}>

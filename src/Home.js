@@ -7,7 +7,7 @@ export default class Home extends React.Component {
     return (
       <View style={styles.container}>
         <Text>We use web3!</Text>
-        <MainPage/>
+        <MainPage navigation={this.props.navigation}/>
       </View>
     );
   }
